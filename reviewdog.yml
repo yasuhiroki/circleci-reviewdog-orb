@@ -30,6 +30,9 @@ jobs:
         description: Reviewdog version
         type: string
         default: 0.9.11
+      reviewdog_format_option:
+        description: Reviewdog format options
+        type: string
       run_linter_steps:
         description: Run linter steps
         type: steps
@@ -49,4 +52,35 @@ jobs:
           chmod +x /usr/local/bin/reviewdog
       - run: |
           test ${CI_PULL_REQUEST} || exit 0
-          cat <<parameters.lint_result_file_path>> | reviewdog -f=rubocop -reporter=github-pr-review
+          cat <<parameters.lint_result_file_path>> | reviewdog <<parameters.reviewdog_format_option>> -reporter=github-pr-review
+
+examples:
+  rubocop:
+    description: |
+      Run rubocop and reviewdog
+    usage:
+      orbs:
+        reviewdog: yasuhiroki/reviewdog@0.0.3
+      commands:
+        lint:
+          parameters:
+            lint_result_file_path:
+              description: Lint result file path
+              type: string
+          steps:
+            - checkout
+            - run: rubocop --out <<parameters.lint_result_file_path>> || true
+            - store_artifacts:
+                path: <<parameters.lint_result_file_path>>
+      version: 2.1
+      workflows:
+        main:
+          jobs:
+            - reviewdog/reviewdog:
+                linter_image: cagedata/rubocop
+                reviewdog_format_option: -f=rubocop
+                run_linter_steps:
+                  - lint:
+                      lint_result_file_path: res.txt
+                lint_result_file_path: res.txt
+
