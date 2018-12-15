@@ -1,54 +1,51 @@
 version: 2.1
 
-description: # The purpose of this orb
+description: |
+  Install and run reviewdog (https://github.com/haya14busa/reviewdog).
+  You can run linter using run_linter_steps before reviewdog.
+  Now, support only GitHub. You should define REVIEWDOG_GITHUB_API_TOKEN environment in your circleci project.
 
 executors:
   default:
+    description: |
+      To run your linter and reviewdog Docker container.
+      note) Reviewdog is instlaled by wget command, so this container should be able to use wget.
     parameters:
       linter_image:
-        description: Linter executable image
+        description: Specify your linter tool executable image
         type: string
         default: alpine:latest
     docker:
       - image: <<parameters.linter_image>>
 
-commands:
-  install:
-    steps:
-      - run: |
-          test -f /usr/local/bin/reviewdog \
-            || \
-          wget https://github.com/haya14busa/reviewdog/releases/download/0.9.11/reviewdog_linux_amd64 -O /usr/local/bin/reviewdog \
-            && \
-          chmod +x /usr/local/bin/reviewdog
-  reviewdog:
-    parameters:
-      lint_result_file_path:
-        description: Lint result file path
-        type: string
-    steps:
-      - run: |
-          test ${CI_PULL_REQUEST} || exit 0
-          cat <<parameters.lint_result_file_path>> | reviewdog -f=rubocop -reporter=github-pr-review
-
 jobs:
   reviewdog:
     parameters:
-      run_linter_steps:
-        description: Run linter steps
-        type: steps
-      lint_result_file_path:
-        description: Lint result file path
-        type: string
       linter_image:
         description: Linter executable image
         type: string
         default: alpine:latest
+      reviewdog_version:
+        description: Reviewdog version
+        type: string
+        default: 0.9.11
+      run_linter_steps:
+        description: Run linter steps
+        type: steps
+      lint_result_file_path:
+        description: Linter output result file path
+        type: string
     executor:
       name: default
       linter_image: <<parameters.linter_image>>
     steps:
       - steps: <<parameters.run_linter_steps>>
-      - install
-      - reviewdog:
-          lint_result_file_path: <<parameters.lint_result_file_path>>
+      - run: |
+          test -f /usr/local/bin/reviewdog \
+            || \
+          wget https://github.com/haya14busa/reviewdog/releases/download/<<parameters.reviewdog_version>>/reviewdog_linux_amd64 -O /usr/local/bin/reviewdog \
+            && \
+          chmod +x /usr/local/bin/reviewdog
+      - run: |
+          test ${CI_PULL_REQUEST} || exit 0
+          cat <<parameters.lint_result_file_path>> | reviewdog -f=rubocop -reporter=github-pr-review
