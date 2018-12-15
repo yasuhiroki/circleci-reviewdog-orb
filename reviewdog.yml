@@ -1,0 +1,54 @@
+version: 2.1
+
+description: # The purpose of this orb
+
+executors:
+  default:
+    parameters:
+      linter_image:
+        description: Linter executable image
+        type: string
+        default: alpine:latest
+    docker:
+      - image: <<parameters.linter_image>>
+
+commands:
+  install:
+    steps:
+      - run: |
+          test -f /usr/local/bin/reviewdog \
+            || \
+          wget https://github.com/haya14busa/reviewdog/releases/download/0.9.11/reviewdog_linux_amd64 -O /usr/local/bin/reviewdog \
+            && \
+          chmod +x /usr/local/bin/reviewdog
+  reviewdog:
+    parameters:
+      lint_result_file_path:
+        description: Lint result file path
+        type: string
+    steps:
+      - run: |
+          test ${CI_PULL_REQUEST} || exit 0
+          cat <<parameters.lint_result_file_path>> | reviewdog -f=rubocop -reporter=github-pr-review
+
+jobs:
+  reviewdog:
+    parameters:
+      run_linter_steps:
+        description: Run linter steps
+        type: steps
+      lint_result_file_path:
+        description: Lint result file path
+        type: string
+      linter_image:
+        description: Linter executable image
+        type: string
+        default: alpine:latest
+    executor:
+      name: default
+      linter_image: <<parameters.linter_image>>
+    steps:
+      - steps: <<parameters.run_linter_steps>>
+      - install
+      - reviewdog:
+          lint_result_file_path: <<parameters.lint_result_file_path>>
