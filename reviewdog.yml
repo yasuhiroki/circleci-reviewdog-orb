@@ -4,6 +4,7 @@ description: |
   Install and run reviewdog (https://github.com/haya14busa/reviewdog).
   You can run linter using run_linter_steps before reviewdog.
   Now, support only GitHub. You should define REVIEWDOG_GITHUB_API_TOKEN environment in your circleci project.
+  This orb is mainted in https://github.com/yasuhiroki/circleci-reviewdog-orb
 
 executors:
   default:
