@@ -1,0 +1,32 @@
+parameters:
+  linter_image:
+    description: Linter executable image
+    type: string
+    default: alpine:latest
+  reviewdog_version:
+    description: Reviewdog version
+    type: string
+    default: 0.9.11
+  reviewdog_format_option:
+    description: Reviewdog format options
+    type: string
+  run_linter_steps:
+    description: Run linter steps
+    type: steps
+  lint_result_file_path:
+    description: Linter output result file path
+    type: string
+executor:
+  name: default
+  linter_image: <<parameters.linter_image>>
+steps:
+  - steps: <<parameters.run_linter_steps>>
+  - run: |
+      test -f /usr/local/bin/reviewdog \
+        || \
+      curl https://github.com/haya14busa/reviewdog/releases/download/<<parameters.reviewdog_version>>/reviewdog_linux_amd64 -o /usr/local/bin/reviewdog \
+        && \
+      chmod +x /usr/local/bin/reviewdog
+  - run: |
+      test ${CI_PULL_REQUEST} || exit 0
+      cat <<parameters.lint_result_file_path>> | reviewdog <<parameters.reviewdog_format_option>> -reporter=github-pr-review

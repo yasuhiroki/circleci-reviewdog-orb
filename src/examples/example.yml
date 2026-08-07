@@ -1,0 +1,28 @@
+description: |
+  Run rubocop and reviewdog
+usage:
+  orbs:
+    reviewdog: yasuhiroki/reviewdog@0.0.3
+  commands:
+    lint:
+      parameters:
+        lint_result_file_path:
+          description: Lint result file path
+          type: string
+      steps:
+        - checkout
+        - run: rubocop --out <<parameters.lint_result_file_path>> || true
+        - store_artifacts:
+            path: <<parameters.lint_result_file_path>>
+  version: 2.1
+  workflows:
+    main:
+      jobs:
+        - reviewdog/reviewdog:
+            linter_image: cagedata/rubocop
+            reviewdog_format_option: -f=rubocop
+            run_linter_steps:
+              - lint:
+                  lint_result_file_path: res.txt
+            lint_result_file_path: res.txt
+
