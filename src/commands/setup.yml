@@ -1,0 +1,13 @@
+description: >
+  install reviewdog binary
+parameters:
+  reviewdog_version:
+    type: string
+    default: "latest"
+    description: "reviewdog version. [latest,vX.Y.Z]"
+steps:
+  - run:
+      environment:
+        REVIEWDOG_VERSION: <<parameters.reviewdog_version>>
+      name: install reviewdog
+      command: <<include(scripts/setup.sh)>>
