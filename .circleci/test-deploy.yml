@@ -22,7 +22,7 @@ release-filters: &release-filters
 jobs:
   # Create jobs to test the commands of your orbs.
   # You may want to add additional validation steps to ensure the commands are working as expected.
-  command-test:
+  setup-test:
     docker:
       - image: cimg/base:current
     steps:
@@ -31,12 +31,23 @@ jobs:
       - reviewdog/setup
       - run: command -v reviewdog
       - run: reviewdog -h 2>&1 || true
+  rubocop-test:
+    docker:
+      - image: cimg/ruby:4.0
+    steps:
+      - checkout
+      # Run your orb's commands to validate them.
+      - reviewdog/setup
+      - run: gem install rubocop
+      - reviewdog/rubocop
 workflows:
   test-deploy:
     jobs:
       # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
       # Test your orb's commands in a custom job and test your orb's jobs directly as a part of this workflow.
-      - command-test:
+      - setup-test:
+          filters: *filters
+      - rubocop-test:
           filters: *filters
       # The orb must be re-packed for publishing, and saved to the workspace.
       - orb-tools/pack:
@@ -48,6 +59,7 @@ workflows:
           # Ensure this job requires all test jobs and the pack job.
           requires:
             - orb-tools/pack
-            - command-test
+            - setup-test
+            - rubocop-test
           context: orb-publishing
           filters: *release-filters

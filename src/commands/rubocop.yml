@@ -1,0 +1,6 @@
+description: >
+  run rubocop with reviewdog
+steps:
+  - run:
+      name: run rubocop with reviewdog
+      command: <<include(scripts/rubocop.sh)>>
