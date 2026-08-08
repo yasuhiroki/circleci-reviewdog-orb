@@ -1,6 +1,6 @@
 description: |
   To run your linter and reviewdog Docker container.
-  note) Reviewdog is instlaled by curl command, so this container should be able to use curl.
+  note) Reviewdog is installed by curl command, so this container should be able to use curl.
 docker:
   - image: <<parameters.linter_image>>
 parameters:
