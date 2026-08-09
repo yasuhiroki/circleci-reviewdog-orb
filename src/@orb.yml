@@ -2,7 +2,9 @@ version: 2.1
 
 description: >
   Setup and run reviewdog (https://github.com/reviewdog/reviewdog).
-  Now, support only GitHub. You should define REVIEWDOG_GITHUB_API_TOKEN environment in your circleci project.
+  Currently, only GitHub is supported.
+  In your CircleCI project settings, set the `REVIEWDOG_GITHUB_API_TOKEN` environment variable.
+  To use the `github-pr-check` or `github-check` reporter, you can set REVIEWDOG_TOKEN. However, this token is deprecated; GitHub Actions is recommended instead.
 
 display:
   home_url: https://github.com/yasuhiroki/circleci-reviewdog-orb
