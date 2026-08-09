@@ -1,6 +1,24 @@
 description: >
   run rubocop with reviewdog
+parameters:
+  reviewdog_reporter:
+    type: enum
+    enum: ["github-pr-check", "github-check", "github-pr-review"]
+    default: "github-pr-check"
+    description: "specify reviewdog reporter"
+  rubocop_exec:
+    type: string
+    default: "rubocop"
+    description: "rubocop exececution string (ex. rubocop, bundle exec rubocop)"
+  rubocop_opts:
+    type: string
+    default: ""
+    description: "additional rubocop options"
 steps:
   - run:
+      environment:
+        REVIEWDOG_REPORTER: <<parameters.reviewdog_reporter>>
+        RUBOCOP_EXEC: <<parameters.rubocop_exec>>
+        RUBOCOP_OPTS: <<parameters.rubocop_opts>>
       name: run rubocop with reviewdog
       command: <<include(scripts/rubocop.sh)>>
