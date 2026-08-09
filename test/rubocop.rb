@@ -1,3 +1,3 @@
 class Test
-  @@foo = [:bar,]
+    A = "hoge"
 end
