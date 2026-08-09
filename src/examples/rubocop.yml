@@ -1,0 +1,17 @@
+description: |
+  Run rubocop and reviewdog
+usage:
+  version: 2.1
+  orbs:
+    reviewdog: yasuhiroki/reviewdog@1.0.0
+  jobs:
+    lint:
+      docker:
+        - image: cimg/ruby:4.0
+      steps:
+        - reviewdog/setup
+        - reviewdog/rubocop
+  workflows:
+    main:
+      jobs:
+        - lint
