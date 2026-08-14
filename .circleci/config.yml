@@ -16,7 +16,7 @@ workflows:
       - orb-tools/pack:
           filters: *filters
       - orb-tools/review:
-          orb_name: yasuhiroki/reviewdog
+          orb_name: reviewdog
           filters: *filters
       - shellcheck/check:
           filters: *filters
