@@ -3,7 +3,7 @@ description: |
 usage:
   version: 2.1
   orbs:
-    reviewdog: yasuhiroki/reviewdog@1.0.0
+    reviewdog: yasuhiroki/reviewdog@0.1.0
   jobs:
     lint:
       docker:
