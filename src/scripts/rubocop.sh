@@ -16,6 +16,7 @@ if [ -n "$RUBOCOP_OPTS" ]; then
 fi
 
 ${RUBOCOP_EXEC} \
+  --cache false \
   --require ./rdjson_formatter.rb \
   --format RdjsonFormatter \
   --fail-level error \
