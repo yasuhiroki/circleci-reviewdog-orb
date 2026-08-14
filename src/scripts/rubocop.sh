@@ -19,6 +19,12 @@ ${RUBOCOP_EXEC} \
   --require ./rdjson_formatter.rb \
   --format RdjsonFormatter \
   --fail-level error \
+  "${rubocop_opts[@]}"
+
+${RUBOCOP_EXEC} \
+  --require ./rdjson_formatter.rb \
+  --format RdjsonFormatter \
+  --fail-level error \
   "${rubocop_opts[@]}" \
   | \
   reviewdog -f=rdjson \
